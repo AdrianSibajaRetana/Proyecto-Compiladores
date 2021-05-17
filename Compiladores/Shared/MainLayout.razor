@@ -1,10 +1,19 @@
 ﻿@inherits LayoutComponentBase
 <div class="main">
-    <div class="top-row px-4">
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
-    </div>
+    <MudAppBar Color="Color.Dark" Fixed="false" Dense="true">        
+        <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" Link="/"/>
+        <MudText Typo="Typo.h5" class="px-4">Compilador</MudText>
+        <MudAppBarSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.Groups" Color="Color.Inherit" Link="/sobre" />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/AdrianSibajaRetana/Proyecto-Compiladores" />
+    </MudAppBar>
 
-    <div class="content px-4">
+    <MudMainContent Class="mudblazor-main-content">
         @Body
-    </div>
+    </MudMainContent>
+
 </div>
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
