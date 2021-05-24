@@ -1,22 +1,24 @@
 ﻿@page "/"
 @using System;
- 
+
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
     <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Compilador de frases</MudText>
     <MudGrid Spacing="6" Class="mt-16">
-        <MudItem xs="7">
-            <MudText Typo="Typo.h5" GutterBottom="true">Entrada</MudText>
+        <MudItem xs="6">
+            <MudText Typo="Typo.h5" GutterBottom="true">Entrada en español</MudText>
             <MudGrid>
-                <MudItem xs="12">                    
-                    <MudTextField T="string" Label="Entrada a compilar" @bind-Value="@EntradaDeUsuario"/>
+                <MudItem xs="12">
+                    <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@EntradaDeUsuario" Lines="5"
+                        Immediate="true" />
                 </MudItem>
                 <MudItem xs="12" Class="d-flex justify-center">
-                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" Size="Size.Large" Class="mt-8" OnClick="CompileEntry">Compilar</MudButton>
+                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" Size="Size.Large"
+                        Class="mt-8" OnClick="CompileEntry" Disabled="@ButtonDisabled">Compilar</MudButton>
                 </MudItem>
             </MudGrid>
         </MudItem>
-        <MudItem xs="5">
-            <MudText Typo="Typo.h5" GutterBottom="true">Resultado</MudText>
+        <MudItem xs="6">
+            <MudText Typo="Typo.h5" GutterBottom="true">Resultado en JavaScript</MudText>
             <MudPaper Class="d-flex flex-column" Style="height:100%;" Outlined="true">
                 <MudList Clickable="true">
                     <MudListItem Text="@Salida" />
@@ -25,8 +27,8 @@
                     <MudDivider />
                     <div class="d-flex pa-4">
                         <MudText>Estado:</MudText>
-                        @if (String.IsNullOrEmpty(Estado)) 
-                        { 
+                        @if (String.IsNullOrEmpty(Estado))
+                        {
                             <MudText Class="ml-auto"><b>En proceso</b></MudText>
                         }
                         else
@@ -36,10 +38,10 @@
                                 <MudText Class="ml-auto" Color="Color.Success"><b>@Estado</b></MudText>
                             }
                             else
-                            { 
+                            {
                                 <MudText Class="ml-auto" Color="Color.Error"><b>@Estado</b></MudText>
                             }
-                            
+
                         }
                     </div>
                 </div>
