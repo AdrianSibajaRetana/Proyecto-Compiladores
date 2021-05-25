@@ -47,9 +47,15 @@ namespace Compiladores.Pages
         {
             if (!IsListening)
             {
+                Clear();
                 IsListening = true;
                 await SpeechRecognition.StartAsync();
             }
+        }
+
+        private void Clear()
+        {
+            Salida = Estado = EntradaDeUsuario = string.Empty;
         }
 
         // Termina de grabar
@@ -82,7 +88,16 @@ namespace Compiladores.Pages
         // Almacena el contenido del contenido escuchado. 
         private void OnSpeechRecognized(object sender, SpeechRecognitionEventArgs args)
         {
-            Results = args.Results.Skip(args.ResultIndex).ToArray();
+            foreach (var i in args.Results.Skip(args.ResultIndex))
+            {
+                if (i.IsFinal)
+                {
+                    var transcript = i.Items.First().Transcript;
+                    EntradaDeUsuario += string.IsNullOrEmpty(EntradaDeUsuario)
+                        ? transcript
+                        : $"\n{transcript}";
+                }
+            }
             StateHasChanged();
         }
 
