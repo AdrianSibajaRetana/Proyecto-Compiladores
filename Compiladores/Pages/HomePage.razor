@@ -9,11 +9,18 @@
             <MudGrid>
                 <MudItem xs="12">
                     <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@EntradaDeUsuario" Lines="5"
-                        Immediate="true" />
+                                  Immediate="true" />
+                </MudItem>
+                <MudItem xs="12" Class="d-flex justify-center">
+                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Success" Size="Size.Small"
+                               Class="mt-8" OnClick="OnClickStart" Disabled="@(IsListening)">Grabar Audio</MudButton>
+
+                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Error" Size="Size.Small"
+                               Class="mt-8" OnClick="OnClickStop" Disabled="@(!IsListening)">Detener Audio</MudButton>
                 </MudItem>
                 <MudItem xs="12" Class="d-flex justify-center">
                     <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" Size="Size.Large"
-                        Class="mt-8" OnClick="CompileEntry" Disabled="@ButtonDisabled">Compilar</MudButton>
+                               Class="mt-8" OnClick="CompileEntry" Disabled="@ButtonDisabled">Compilar</MudButton>
                 </MudItem>
             </MudGrid>
         </MudItem>
