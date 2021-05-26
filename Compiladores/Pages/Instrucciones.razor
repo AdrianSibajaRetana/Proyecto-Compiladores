@@ -29,12 +29,17 @@
     </MudSimpleTable>
     <MudItem Class="mt-8">
         <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">
-            Para constuir frases se usan frases y expresiones.
+            El compilador construye comandos a partir de frases y expresiones.
         </MudText>
-        <MudText Typo="Typo.body1">
-            Las <b>frases</b> son los comandos en javascript que el compilador puede generar a partir de
-            la entrada escrita. Las <b>expresiones</b> son frases ayudantes que nos ayudan a componer
-            una frase principal.
+        <MudText Typo="Typo.body1" Align="Align.Justify">
+
+            Una <b>frase</b> es el texto digitado por el usuario como entrada, para ser compilado y traducido
+            a comandos del lenguaje Javascript.
+            El compilador analiza esta frase y la divide en <i>tokens</i> y <b>expresiones</b>. Estas últimas son
+            series de <i>tokens</i> que poseen un significado en conjunto para el compilador, es decir, 
+            son reconocidas como un grupo y no como <i>tokens</i> aislados.
+            Con esto, se pueden compilar frases complejas compuestas de tantas expresiones y <i>tokens</i> como 
+            sean necesarios.
         </MudText>
         <MudText Typo="Typo.body1">
             Las expresiones que entiende el compilador son las siguientes: 
@@ -46,7 +51,7 @@
                 <th>Expresión</th>
                 <th>Composición léxica</th>
                 <th>Ejemplo</th>
-                <th>Resultado</th>
+                <th>Comando</th>
             </tr>
         </thead>
         <tbody>
@@ -62,9 +67,11 @@
         </tbody>
     </MudSimpleTable>
     <MudItem Class="mt-2">
-        <MudText Typo="Typo.body1">
-            Como se muestra en la tabla anterior, se manejan dos expresiones recursivas y dos expresiones
-            literales. Que nos ayudan a constuir las siguientes frases:   
+        <MudText Typo="Typo.body1" Align="Align.Justify">
+            Como se muestra en la tabla anterior, se manejan dos expresiones recursivas (es decir, que 
+            contienen a otras expresiones dentro de sí mismas) y dos expresiones
+            literales. A partir de ellas, se pueden reconocer las siguientes frases y traducirlas a sus respectivos
+            comandos:
         </MudText>
     </MudItem>
     <MudSimpleTable Hover="true" Dense="true" FixedHeader="true" Style="height:300px;" Class="mt-8 mb-16">
@@ -73,7 +80,7 @@
                 <th>Frase</th>
                 <th>Composición léxica</th>
                 <th>Ejemplo</th>
-                <th>Resultado</th>
+                <th>Comando</th>
             </tr>
         </thead>
         <tbody>
