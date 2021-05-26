@@ -1,11 +1,24 @@
 ﻿@inherits LayoutComponentBase
 <div class="main">
-    <MudAppBar Color="Color.Dark" Fixed="false" Dense="true">        
-        <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" Link="/"/>
+    <MudAppBar Color="Color.Dark" Fixed="false" Dense="true">
+
+        <MudTooltip Text="Página principal">
+            <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" Link="/" />
+        </MudTooltip>        
         <MudText Typo="Typo.h5" class="px-4">Compilador</MudText>
+
         <MudAppBarSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.Groups" Color="Color.Inherit" Link="/sobre" />
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/AdrianSibajaRetana/Proyecto-Compiladores" Target="_blank" />
+
+        <MudTooltip Text="Instrucciones">
+            <MudIconButton Icon="@Icons.Material.Filled.Help" Color="Color.Inherit" Link="/instrucciones" />
+        </MudTooltip>
+        <MudTooltip Text="Elaborado por">
+            <MudIconButton Icon="@Icons.Material.Filled.Groups" Color="Color.Inherit" Link="/sobre" />
+        </MudTooltip>
+        <MudTooltip Text="Repositorio de git">
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/AdrianSibajaRetana/Proyecto-Compiladores" Target="_blank" />
+        </MudTooltip>
+
     </MudAppBar>
 
     <MudMainContent Class="mudblazor-main-content">

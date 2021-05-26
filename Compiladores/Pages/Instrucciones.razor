@@ -1,0 +1,204 @@
+﻿@page "/instrucciones"
+
+@using System;
+@using System.Linq; 
+
+<MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">
+        Instrucciones entendidas
+    </MudText>
+    <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">
+        El compilador entiende los siguientes lexemas y tokens.
+    </MudText>
+    <MudSimpleTable Hover="true" Dense="true" FixedHeader="true" Style="height:300px;" Class="mt-8">
+        <thead>
+            <tr>
+                <th>Token</th>
+                <th>Lexemas</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (KeyValuePair<string, string> pair in tokensYlexemas)
+            {
+                <tr>
+                    <td>@pair.Key</td>
+                    <td>@pair.Value</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+    <MudItem Class="mt-8">
+        <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">
+            Para constuir frases se usan frases y expresiones.
+        </MudText>
+        <MudText Typo="Typo.body1">
+            Las <b>frases</b> son los comandos en javascript que el compilador puede generar a partir de
+            la entrada escrita. Las <b>expresiones</b> son frases ayudantes que nos ayudan a componer
+            una frase principal.
+        </MudText>
+        <MudText Typo="Typo.body1">
+            Las expresiones que entiende el compilador son las siguientes: 
+        </MudText>
+    </MudItem>
+    <MudSimpleTable Hover="true" Dense="true" Class="mt-8 mb-16">
+        <thead>
+            <tr>
+                <th>Expresión</th>
+                <th>Composición léxica</th>
+                <th>Ejemplo</th>
+                <th>Resultado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (KeyValuePair<string, Composicion> pair in expresiones)
+            {
+                <tr>
+                    <td>@pair.Key</td>
+                    <td>@pair.Value.RepresentacionLexica</td>
+                    <td>@pair.Value.Ejemplo</td>
+                    <td>@pair.Value.Resultado</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+    <MudItem Class="mt-2">
+        <MudText Typo="Typo.body1">
+            Como se muestra en la tabla anterior, se manejan dos expresiones recursivas y dos expresiones
+            literales. Que nos ayudan a constuir las siguientes frases:   
+        </MudText>
+    </MudItem>
+    <MudSimpleTable Hover="true" Dense="true" FixedHeader="true" Style="height:300px;" Class="mt-8 mb-16">
+        <thead>
+            <tr>
+                <th>Frase</th>
+                <th>Composición léxica</th>
+                <th>Ejemplo</th>
+                <th>Resultado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (KeyValuePair<string, Composicion> pair in frasesYRepresentacion)
+            {
+                <tr>
+                    <td>@pair.Key</td>
+                    <td>@pair.Value.RepresentacionLexica</td>
+                    <td>@pair.Value.Ejemplo</td>
+                    <td>@pair.Value.Resultado</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+</MudContainer>
+
+@code {
+    public class Composicion
+    {
+        public string RepresentacionLexica { get; set; }
+        public string Ejemplo { get; set; }
+        public string Resultado { get; set; }
+        public Composicion(string r, string e, string re)
+        {
+            RepresentacionLexica = r;
+            Ejemplo = e;
+            Resultado = re;
+        }
+    }
+
+    Dictionary<string, string> tokensYlexemas = new() {
+        {
+            "Operador",
+            "[Ss]ume, [Rr]este, [Mm]ultiplique, [Dd]ivida, [Cc]onjuncion, [Dd]isyuncion, [Ii]guales"
+        },
+        {
+            "Operador Unario",
+            "[Nn]egar"
+        },
+        {
+            "Comando",
+            "[Dd]eclare, [Aa]signe, [Ii]mprima, [Rr]etorne, [Ii]nvoque"
+        },
+        {
+            "Tipo",
+            "\"variable\", \"funcion\", \"parametros\""
+        },
+        {
+            "Keyword Asignacion",
+            "\"a\""
+        },
+        {
+            "Keyword Parametros",
+            "\"con\""
+        },
+        {
+            "Keyword Funcion",
+            "\"que\""
+        },
+        {
+            "Keyword Igualdad",
+            "[Ss]on"
+        },
+        {
+            "Control",
+            "[Ss]i, \"entonces\""
+        },
+        {
+            "Separador",
+            "\",\" , \"y\""
+        },
+        {
+            "Terminador",
+            "\".\""
+        },
+        {
+            "Literal",
+            "[0-9]+(.[0-9]+)?, \".*\", \"true\", \"false\""
+        },
+        {
+            "Id",
+            "[a-zA-Z_]+[0-9]*"
+        },
+    };
+
+    Dictionary<string, Composicion> expresiones = new()
+    {
+        {
+            "Negación de Expresion",
+            new Composicion("Operador_Unario EXPRESION", "Negar A", "!A")
+        },
+        {
+            "Operación aritmética",
+            new Composicion("Operador EXPRESION Separador EXPRESION", "sume B y C", "B + C")
+        },
+        {
+            "Literal en expresión",
+            new Composicion("Literal", "9", "9")
+        },
+        {
+            "ID en expresión",
+            new Composicion("Id", "D", "D")
+        },
+
+    };
+
+
+    Dictionary<string, Composicion> frasesYRepresentacion = new()
+    {
+        {
+            "Declaración de variable",
+            new Composicion("Comando Tipo Id Terminador", "Asigne variable A.", "let A;")
+        },
+        {
+            "Declarar el resultado de expresión a variable",
+            new Composicion("Comando EXPRESIÓN Keyword_asignacion Id Terminador", "Asigne sume B y C a A.", "A = B + C;")
+        },
+        {
+            "Imprimir expresión",
+            new Composicion("Comando EXPRESIÓN Terminador", "Imprima B.", "console.log(B)")
+        },
+        {
+            "Control lógico",
+            new Composicion("control EXPRESION control [Cualquier Frase] terminador", "Si A entonces imprima B.", "if(A){console.log(B)}")
+        },
+
+    };
+}
