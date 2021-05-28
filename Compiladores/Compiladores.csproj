@@ -8,9 +8,13 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.6" />    
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.6" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
-	  
     <PackageReference Include="Toolbelt.Blazor.SpeechRecognition" Version="0.0.4.6-alpha" />
     <PackageReference Include="MudBlazor" Version="5.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+      <!-- extends watching group to include *.js files -->
+      <Watch Include="**\*.js" Exclude="node_modules\**\*;**\*.js.map;obj\**\*;bin\**\*" />
   </ItemGroup>
 
 </Project>

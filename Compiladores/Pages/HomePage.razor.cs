@@ -35,7 +35,7 @@ namespace Compiladores.Pages
 
         protected override void OnInitialized()
         {
-            SpeechRecognition.Lang = "es-MX";
+            SpeechRecognition.Lang = "es-CR";
             SpeechRecognition.InterimResults = true;
             SpeechRecognition.Continuous = true;
             SpeechRecognition.Result += OnSpeechRecognized;
@@ -47,7 +47,6 @@ namespace Compiladores.Pages
         {
             if (!IsListening)
             {
-                Clear();
                 IsListening = true;
                 await SpeechRecognition.StartAsync();
             }
@@ -92,7 +91,17 @@ namespace Compiladores.Pages
             {
                 if (i.IsFinal)
                 {
-                    var transcript = i.Items.First().Transcript;
+                    var transcript = i.Items.First().Transcript
+                        .Replace("á", "a")
+                        .Replace("é", "e")
+                        .Replace("í", "i")
+                        .Replace("ó", "o")
+                        .Replace("ú", "u")
+                        .Replace("Á", "A")
+                        .Replace("É", "E")
+                        .Replace("Í", "I")
+                        .Replace("Ó", "O")
+                        .Replace("Ú", "U");
                     EntradaDeUsuario += string.IsNullOrEmpty(EntradaDeUsuario)
                         ? transcript
                         : $"\n{transcript}";
@@ -116,6 +125,35 @@ namespace Compiladores.Pages
             {
                 Estado = "Error";
                 Salida = "Algo salió mal :(";
+            }
+        }
+
+        public List<(string, string)> ListaSimbolos()
+        {
+            if (Salida == null) return new();
+
+            try
+            {
+                var simbolos = new List<(string, string)>();
+                foreach (var linea in Salida.Split('\n'))
+                {
+                    if (linea.StartsWith("let"))
+                    {
+                        simbolos.Add((linea.Split(' ')[1].Replace(";", ""), "variable"));
+                    }
+                    else if (linea.StartsWith("function"))
+                    {
+                        simbolos.Add((string.Concat(
+                            linea.Split(' ')[1]
+                                .TakeWhile(c => c != '(')), "función"));
+                    }
+                }
+
+                return simbolos;
+            }
+            catch (Exception)
+            {
+                return new();
             }
         }
     }

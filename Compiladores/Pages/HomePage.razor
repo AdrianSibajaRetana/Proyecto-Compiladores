@@ -1,34 +1,44 @@
 ﻿@page "/"
 @using System;
 
-<MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
+<MudContainer Class="mt-8" MaxWidth="MaxWidth.Large">
     <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Compilador de frases</MudText>
     <MudGrid Spacing="6" Class="mt-16">
-        <MudItem xs="6">
+        <MudItem xs="4">
             <MudText Typo="Typo.h5" GutterBottom="true">Entrada en español</MudText>
             <MudGrid>
                 <MudItem xs="12">
                     <MudTextField T="string" Variant="Variant.Outlined" @bind-Value="@EntradaDeUsuario" Lines="5"
-                                  Immediate="true" />
+                        Immediate="true" />
                 </MudItem>
                 <MudItem xs="12" Class="d-flex justify-center">
                     <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Success" Size="Size.Small"
-                               Class="mt-8" OnClick="OnClickStart" Disabled="@(IsListening)">Grabar Audio</MudButton>
+                        Class="mt-8" OnClick="OnClickStart" Disabled="@(IsListening)">Grabar Audio</MudButton>
 
                     <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Error" Size="Size.Small"
-                               Class="mt-8" OnClick="OnClickStop" Disabled="@(!IsListening)">Detener Audio</MudButton>
+                        Class="mt-8" OnClick="OnClickStop" Disabled="@(!IsListening)">Detener Audio</MudButton>
                 </MudItem>
                 <MudItem xs="12" Class="d-flex justify-center">
-                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" Size="Size.Large"
-                               Class="mt-8" OnClick="CompileEntry" Disabled="@ButtonDisabled">Compilar</MudButton>
+                    <MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="false">
+                        <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Transparent" Size="Size.Large"
+                            Class="mt-8" OnClick="Clear">Limpiar</MudButton>
+                        <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" Size="Size.Large"
+                            Class="mt-8" OnClick="CompileEntry" Disabled="@ButtonDisabled">Compilar</MudButton>
+                    </MudButtonGroup>
                 </MudItem>
             </MudGrid>
         </MudItem>
-        <MudItem xs="6">
+        <MudItem xs="4">
             <MudText Typo="Typo.h5" GutterBottom="true">Resultado en JavaScript</MudText>
             <MudPaper Class="d-flex flex-column" Style="height:100%;" Outlined="true">
                 <MudList Clickable="true">
-                    <MudListItem Text="@Salida" />
+                    @if (Salida != null)
+                    {
+                        @foreach (var linea in Salida.Split('\n'))
+                        {
+                            <MudListItem Text="@linea" />
+                        }
+                    }
                 </MudList>
                 <div class="mt-auto">
                     <MudDivider />
@@ -52,6 +62,20 @@
                         }
                     </div>
                 </div>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Tabla de símbolos</MudText>
+            <MudPaper Class="d-flex flex-column" Style="height:100%;" Outlined="true">
+                <MudList Clickable="true">
+                    @if (Salida != null)
+                    {
+                        @foreach (var simbolo in ListaSimbolos())
+                        {
+                            <MudListItem Text="@($"{simbolo.Item1}: {simbolo.Item2}")" />
+                        }
+                    }
+                </MudList>
             </MudPaper>
         </MudItem>
     </MudGrid>
