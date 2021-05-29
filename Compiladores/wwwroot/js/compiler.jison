@@ -78,7 +78,7 @@ comando_declaracion tipo id terminador {
 
 RETORNO:
 comando_retorno EXPRESION terminador {
-    $$ = 'return ' + $2;
+    $$ = "return " + $2 + ";";
 };
 
 ASIGNACION:
@@ -153,7 +153,8 @@ DECLARACION
 | NUEVA_LINEA
 | SENTENCIA_EXPRESION;
 
-SENTENCIA_EXPRESION: EXPRESION terminador {
+SENTENCIA_EXPRESION:
+EXPRESION terminador {
     $$ = $1 + ";";
 };
 

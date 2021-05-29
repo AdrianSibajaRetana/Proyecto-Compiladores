@@ -106,7 +106,7 @@ case 10:
 break;
 case 11:
 
-    this.$ = 'return ' + $$[$0-1];
+    this.$ = "return " + $$[$0-1] + ";";
 
 break;
 case 12:

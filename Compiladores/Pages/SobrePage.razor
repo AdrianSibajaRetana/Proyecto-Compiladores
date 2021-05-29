@@ -1,8 +1,8 @@
-﻿
-@page "/sobre"
+﻿@page "/sobre"
 
 <MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
-    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Elaborado por</MudText>
+    <MudText Typo="Typo.h3" Align="Align.Center" GutterBottom="true">Proyecto Compiladores - UCR - 2021</MudText>
+    <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Elaborado por</MudText>
     <MudSimpleTable Style="overflow-x: auto;" Striped="true" Bordered="true" Hover="true">
         <thead>
             <tr>
@@ -15,11 +15,11 @@
         <tbody>
             @foreach (var est in Estudiantes)
             {
-            <tr>
-                <td>@est.NombreCompleto</td>
-                <td>@est.Carne</td>
-                <td>@est.Email</td>
-            </tr>
+                <tr>
+                    <td>@est.NombreCompleto</td>
+                    <td>@est.Carne</td>
+                    <td>@est.Email</td>
+                </tr>
             }
         </tbody>
     </MudSimpleTable>
@@ -32,18 +32,19 @@
         public string NombreCompleto { get; set; }
         public string Carne { get; set; }
         public string Email { get; set; }
-        public Estudiante(string n, string c, string e) {
+        public Estudiante(string n, string c, string e)
+        {
             NombreCompleto = n;
             Carne = c;
             Email = e;
         }
     }
     List<Estudiante> Estudiantes = new List<Estudiante>()
-        {
-            new Estudiante("Erik Kühlmann", "B84175", "erik.kuhlmann@ucr.ac.cr"),
-            new Estudiante("Esteban Marín", "B84594", "jose.marinmasis@ucr.ac.cr"),
-            new Estudiante("Adrián Sibaja", "B87561", "adrian.sibajaretana@ucr.acr.cr"),
-        };
+{
+new Estudiante("Erik Kühlmann", "B84175", "erik.kuhlmann@ucr.ac.cr"),
+new Estudiante("Esteban Marín", "B84594", "jose.marinmasis@ucr.ac.cr"),
+new Estudiante("Adrián Sibaja", "B87561", "adrian.sibajaretana@ucr.acr.cr"),
+};
 
     string[] headings = { "Nombre", "Carné", "Email", };
 
