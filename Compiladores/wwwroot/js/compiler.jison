@@ -15,14 +15,17 @@
 "a" return 'keyword_asignacion'
 "con" return 'keyword_parametros'
 "que" return 'keyword_funcion'
-"de" return 'keyword_funcion_objeto'
+"de" return 'keyword_miembro_objeto'
+"objeto" return 'keyword_objeto'
+"lambda" return 'keyword_lambda'
 "terminar hilera" return 'terminador_hilera'
 "terminar arreglo" return 'terminador_arreglo'
-"terminar funcion" return 'terminador_funcion'
-"terminar condicional" return 'terminador_condicional'
-"terminar comentario" return 'terminador_comentario'
-"terminar parametros" return 'terminador_parametros'
-[Vv]ariable|[Ff]uncion|[Pp]arametros return 'tipo'
+"terminar funcion"|"Terminar funcion" return 'terminador_funcion'
+"terminar condicional"|"Terminar condicional" return 'terminador_condicional'
+"terminar comentario"|"Terminar comentario" return 'terminador_comentario'
+"terminar parametros"|"Terminar parametros" return 'terminador_parametros'
+"terminar lambda"|"Terminar lambda" return 'terminador_lambda'
+[Vv]ariable|[Ff]uncion|[Pp]arametros? return 'tipo'
 "hilera" return 'keyword_hilera'
 "arreglo" return 'keyword_arreglo'
 [Ss]on return 'keyword_igualdad'
@@ -31,7 +34,7 @@
 [Ss]ino return 'control_sino'
 ","|"y" return 'separador'
 "." return 'terminador'
-[0-9]+(.[0-9]+)?|\".*\" return 'literal_num'
+[0-9]+(.[0-9]+)? return 'literal_num'
 "verdadero"|"falso" return 'literal_bool';
 [a-zA-Z_]+[0-9]* return 'id'
 <<EOF>> return 'EOF'
@@ -74,13 +77,16 @@ comando_declaracion tipo id terminador {
 };
 
 RETORNO:
-comando_retorno EXPRESION {
+comando_retorno EXPRESION terminador {
     $$ = 'return ' + $2;
 };
 
 ASIGNACION:
 comando_asignacion EXPRESION keyword_asignacion id terminador {
     $$ = $4 + " = " + $2 + ";";
+}
+| comando_asignacion EXPRESION keyword_asignacion id keyword_miembro_objeto id terminador {
+    $$ = $6 + "." + $4 + " = " + $2 + ";";
 };
 
 IMPRESION:
@@ -98,30 +104,6 @@ comando_declaracion tipo id keyword_funcion SENTENCIAS terminador_funcion termin
     $$ = "function " + $3 + "(" + $6 + ") {\n"
             + $8  + "\n" +
         "}";
-};
-
-INVOCACION: 
-EXPRESION_INVOCACION terminador {
-    $$ = $1 + ";";
-}
-| EXPRESION_INVOCACION_OBJETO terminador {
-    $$ = $1 + ";";
-};
-
-EXPRESION_INVOCACION:
-| comando_invocacion id {
-    $$ = $2 + "()";
-}
-| comando_invocacion id keyword_parametros tipo EXPRESIONES terminador_parametros {
-    $$ = $2 + "(" + $5 + ")";
-};
-
-EXPRESION_INVOCACION_OBJETO:
-comando_invocacion id keyword_funcion_objeto id {
-    $$ = $4 + "." + $2 + "()";
-}
-| comando_invocacion id keyword_funcion_objeto id keyword_parametros tipo EXPRESIONES terminador_parametros {
-    $$ = $4 + "." + $2 + "(" + $7 + ")";
 };
 
 CLAUSULA_SI:
@@ -165,16 +147,51 @@ DECLARACION
 | ASIGNACION
 | IMPRESION
 | FUNCION
-| INVOCACION
 | CONDICIONAL
 | COMENTARIO
-| NUEVA_LINEA;
+| RETORNO
+| NUEVA_LINEA
+| SENTENCIA_EXPRESION;
 
-EXPRESION:
+SENTENCIA_EXPRESION: EXPRESION terminador {
+    $$ = $1 + ";";
+};
+
+EXPRESION_FUNCION_LAMBDA:
+keyword_lambda keyword_funcion SENTENCIAS terminador_lambda {
+    $$ = "() => {\n"
+        + $3 + "\n"
+    + "}";
+}
+| keyword_lambda keyword_parametros tipo LISTA_PARAMETROS keyword_funcion SENTENCIAS terminador_lambda {
+    $$ = "(" + $4 + ") => {\n"
+        + $6 + "\n"
+    + "}";
+};
+
+EXPRESION_INVOCACION:
+comando_invocacion id {
+    $$ = $2 + "()";
+}
+| comando_invocacion id keyword_parametros tipo EXPRESIONES terminador_parametros {
+    $$ = $2 + "(" + $5 + ")";
+};
+
+EXPRESION_INVOCACION_OBJETO:
+comando_invocacion id keyword_miembro_objeto id {
+    $$ = $4 + "." + $2 + "()";
+}
+| comando_invocacion id keyword_miembro_objeto id keyword_parametros tipo EXPRESIONES terminador_parametros {
+    $$ = $4 + "." + $2 + "(" + $7 + ")";
+};
+
+EXPRESION_OPERADOR_UNARIO:
 operador_unario EXPRESION {
     $$ = "!" + $2;
-}
-| operador EXPRESION separador EXPRESION {
+};
+
+EXPRESION_OPERADOR: 
+operador EXPRESION separador EXPRESION {
     if ($1 == "sume" || $1 == "Sume") {
         $$ = $2 + " + " + $4;
     }
@@ -195,16 +212,27 @@ operador_unario EXPRESION {
     }
 }
 | keyword_igualdad operador EXPRESION separador EXPRESION {
-    $$ = $2 + " === " + $4;
-}
+    $$ = $3 + " === " + $5;
+};
+
+EXPRESION_MIEMBRO_VARIABLE:
+id keyword_miembro_objeto id {
+    $$ = $3 + '.' + $1;
+};
+
+EXPRESION:
+EXPRESION_OPERADOR_UNARIO
+| EXPRESION_OPERADOR
+| EXPRESION_FUNCION_LAMBDA
 | EXPRESION_INVOCACION
 | EXPRESION_INVOCACION_OBJETO
+| EXPRESION_MIEMBRO_VARIABLE
 | LITERAL
 | VAR;
 
 VAR: id;
 
-LITERAL: LITERAL_BOOL | literal_num | LITERAL_HILERA | LITERAL_ARREGLO;
+LITERAL: LITERAL_BOOL | literal_num | LITERAL_HILERA | LITERAL_ARREGLO | LITERAL_OBJETO;
 
 LITERAL_BOOL: literal_bool {
     if ($1 == "verdadero") {
@@ -215,19 +243,31 @@ LITERAL_BOOL: literal_bool {
     }
 };
 
-LITERAL_ARREGLO: keyword_arreglo NUMEROS {
+LITERAL_OBJETO: keyword_objeto {
+    $$ = "{}";
+};
+
+LITERAL_ARREGLO:
+keyword_arreglo terminador_arreglo {
+    $$ = "[]";
+}
+| keyword_arreglo MIEMBROS_ARREGLO {
     $$ = "[" + $2;
 };
 
-NUMEROS:
-literal_num terminador_arreglo {
+MIEMBROS_ARREGLO:
+EXPRESION terminador_arreglo {
     $$ = $1 + "]";
 }
-| literal_num separador NUMEROS {
+| EXPRESION separador MIEMBROS_ARREGLO {
     $$ = $1 + ", " + $3;
 };
 
-LITERAL_HILERA: keyword_hilera HILERAS {
+LITERAL_HILERA:
+keyword_hilera terminador_hilera {
+    $$ = '""';
+}
+| keyword_hilera HILERAS {
     $$ = '"' + $2;
 };
 
@@ -264,4 +304,7 @@ id
 | separador
 | terminador
 | literal_num
-| literal_bool;
+| literal_bool
+| terminador_lambda
+| keyword_lambda
+| objeto;

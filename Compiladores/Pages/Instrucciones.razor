@@ -13,32 +13,28 @@
     <MudSimpleTable Hover="true" Dense="true" FixedHeader="true" Style="height:300px;" Class="mt-8">
         <thead>
             <tr>
+                <th>Lexema</th>
                 <th>Token</th>
-                <th>Lexemas</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (KeyValuePair<string, string> pair in tokensYlexemas)
+            @foreach (var pair in tokensYlexemas)
             {
                 <tr>
-                    <td>@pair.Key</td>
-                    <td>@pair.Value</td>
+                    <td>@pair.Item2</td>
+                    <td>@pair.Item1</td>
                 </tr>
             }
         </tbody>
     </MudSimpleTable>
     <MudItem Class="mt-8">
         <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">
-            El compilador construye comandos a partir de frases y expresiones.
+            El compilador construye comandos a partir de sentencias y expresiones.
         </MudText>
         <MudText Typo="Typo.body1" Align="Align.Justify">
-            Una <b>frase</b> es el texto digitado por el usuario como entrada, para ser compilado y traducido
-            a comandos del lenguaje Javascript.
-            El compilador analiza esta frase y la divide en <i>tokens</i> y <b>expresiones</b>. Estas últimas son
-            series de <i>tokens</i> que poseen un significado en conjunto para el compilador, es decir,
-            son reconocidas como un grupo y no como <i>tokens</i> aislados.
-            Con esto, se pueden compilar frases complejas compuestas de tantas expresiones y <i>tokens</i> como
-            sean necesarios.
+            Una <b>sentencia</b> lleva a cabo una acción. Cada sentencia termina con el token terminador (".").
+            Una <b>expresión</b> se evalúa a un valor. Estas no deben terminar con el token terminador.
+            Las sentencias puede utilizar expresiones.
         </MudText>
         <MudText Typo="Typo.body1">
             Las expresiones que entiende el compilador son las siguientes:
@@ -49,37 +45,34 @@
             <tr>
                 <th>Expresión</th>
                 <th>Composición léxica</th>
-                <th>Ejemplo</th>
-                <th>Comando</th>
+                <th>Ejemplo de entrada</th>
+                <th>Salida en JS</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (KeyValuePair<string, Composicion> pair in expresiones)
+            @foreach (var pair in expresiones)
             {
                 <tr>
-                    <td>@pair.Key</td>
-                    <td>@pair.Value.RepresentacionLexica</td>
-                    <td>@pair.Value.Ejemplo</td>
-                    <td>@pair.Value.Resultado</td>
+                    <td>@pair.Item1</td>
+                    <td>@pair.Item2.RepresentacionLexica</td>
+                    <td>@pair.Item2.Ejemplo</td>
+                    <td>@pair.Item2.Resultado</td>
                 </tr>
             }
         </tbody>
     </MudSimpleTable>
-    <MudItem Class="mt-2">
+    @* <MudItem Class="mt-2">
         <MudText Typo="Typo.body1" Align="Align.Justify">
-            Como se muestra en la tabla anterior, se manejan dos expresiones recursivas (es decir, que
-            contienen a otras expresiones dentro de sí mismas) y dos expresiones
-            literales. A partir de ellas, se pueden reconocer las siguientes frases y traducirlas a sus respectivos
-            comandos:
+            Las sentencias del lenguaje se muestran en la siguiente tabla.
         </MudText>
     </MudItem>
     <MudSimpleTable Hover="true" Dense="true" FixedHeader="true" Style="height:300px;" Class="mt-8 mb-16">
         <thead>
             <tr>
-                <th>Frase</th>
+                <th>Sentencia</th>
                 <th>Composición léxica</th>
-                <th>Ejemplo</th>
-                <th>Comando</th>
+                <th>Ejemplo de entrada</th>
+                <th>Salida en JS</th>
             </tr>
         </thead>
         <tbody>
@@ -93,7 +86,7 @@
                 </tr>
             }
         </tbody>
-    </MudSimpleTable>
+    </MudSimpleTable> *@
 </MudContainer>
 
 @code {
@@ -102,89 +95,87 @@
         public string RepresentacionLexica { get; set; }
         public string Ejemplo { get; set; }
         public string Resultado { get; set; }
-        public Composicion(string r, string e, string re)
+        public Composicion(string represntacionLexica, string ejemplo, string resultado)
         {
-            RepresentacionLexica = r;
-            Ejemplo = e;
-            Resultado = re;
+            RepresentacionLexica = represntacionLexica;
+            Ejemplo = ejemplo;
+            Resultado = resultado;
         }
     }
 
-    Dictionary<string, string> tokensYlexemas = new()
+    List<(string, string)> tokensYlexemas = new()
     {
-        {
-            "Operador",
-            "[Ss]ume, [Rr]este, [Mm]ultiplique, [Dd]ivida, [Cc]onjuncion, [Dd]isyuncion, [Ii]guales"
-        },
-        {
-            "Operador Unario",
-            "[Nn]egar"
-        },
-        {
-            "Comando",
-            "[Dd]eclare, [Aa]signe, [Ii]mprima, [Rr]etorne, [Ii]nvoque"
-        },
-        {
-            "Tipo",
-            "\"variable\", \"funcion\", \"parametros\""
-        },
-        {
-            "Keyword Asignacion",
-            "\"a\""
-        },
-        {
-            "Keyword Parametros",
-            "\"con\""
-        },
-        {
-            "Keyword Funcion",
-            "\"que\""
-        },
-        {
-            "Keyword Igualdad",
-            "[Ss]on"
-        },
-        {
-            "Control",
-            "[Ss]i, \"entonces\""
-        },
-        {
-            "Separador",
-            "\",\" , \"y\""
-        },
-        {
-            "Terminador",
-            "\".\""
-        },
-        {
-            "Literal",
-            "[0-9]+(.[0-9]+)?, \".*\", \"true\", \"false\""
-        },
-        {
-            "Id",
-            "[a-zA-Z_]+[0-9]*"
-        },
+        ("[Ss]ume|[Rr]este|[Mm]ultiplique|[Dd]ivida|[Cc]onjuncion|[Dd]isyuncion|[Ii]guales", "operador"),
+        ("[Nn]egar", "operador_unario"),
+        ("[Dd]eclare", "comando_declaracion"),
+        ("[Aa]signe", "comando_asignacion"),
+        ("[Ii]mprima", "comando_impresion"),
+        ("[Rr]etorne", "comando_retorno"),
+        ("[Ii]nvoque", "comando_invocacion"),
+        ("[Cc]omentario", "comando_comentario"),
+        ("Nueva linea|nueva linea", "comando_nueva_linea"),
+        ("a", "keyword_asignacion"),
+        ("con", "keyword_parametros"),
+        ("que", "keyword_funcion"),
+        ("de", "keyword_miembro_objeto"),
+        ("objeto", "keyword_objeto"),
+        ("lambda", "keyword_lambda"),
+        ("terminar hilera", "terminador_hilera"),
+        ("terminar arreglo", "terminador_arreglo"),
+        ("terminar funcion|Terminar funcion", "terminador_funcion"),
+        ("terminar condicional|Terminar condicional", "terminador_condicional"),
+        ("terminar comentario|Terminar comentario", "terminador_comentario"),
+        ("terminar parametros|Terminar parametros", "terminador_parametros"),
+        ("terminar lambda|Terminar lambda", "terminador_lambda"),
+        ("[Vv]ariable|[Ff]uncion|[Pp]arametros?", "tipo"),
+        ("hilera", "keyword_hilera"),
+        ("arreglo", "keyword_arreglo"),
+        ("[Ss]on", "keyword_igualdad"),
+        ("[Ss]i", "control_si"),
+        ("[Ee]ntonces", "control_entonces"),
+        ("[Ss]ino", "control_sino"),
+        (",|y", "separador"),
+        (".", "terminador"),
+        ("[0-9]+(.[0-9]+)?", "literal_num"),
+        ("verdadero|falso", "literal_bool"),
+        ("[a-zA-Z_]+[0-9]*", "id"),
     };
 
-    Dictionary<string, Composicion> expresiones = new()
+    List<(string, Composicion)> expresiones = new()
     {
-        {
-            "Negación de Expresion",
-            new Composicion("Operador_Unario EXPRESION", "Negar A", "!A")
-        },
-        {
-            "Operación aritmética",
-            new Composicion("Operador EXPRESION Separador EXPRESION", "sume B y C", "B + C")
-        },
-        {
-            "Literal en expresión",
-            new Composicion("Literal", "9", "9")
-        },
-        {
-            "ID en expresión",
-            new Composicion("Id", "D", "D")
-        },
-
+        (
+    "EXPRESION_OPERADOR_UNARIO",
+    new Composicion("operador_unario EXPRESION", "Negar A", "!A")
+    ),
+        (
+    "EXPRESION_OPERADOR",
+    new Composicion("operador EXPRESION separador EXPRESION", "Sume A y B", "A + B")
+    ),
+        (
+    "EXPRESION_OPERADOR",
+    new Composicion("keyword_igualdad operador EXPRESION separador EXPRESION", "Son iguales A y B", "A === B")
+    ),
+        (
+    "EXPRESION_FUNCION_LAMBDA",
+    new Composicion("keyword_lambda keyword_funcion SENTENCIAS terminador_lambda", "lambda que imprima A. Terminar lambda",
+    "() => {\n\tconsole.log(A);\n});")
+    ),
+        (
+    "EXPRESION_FUNCION_LAMBDA",
+    new Composicion("keyword_lambda keyword_parametros tipo LISTA_PARAMETROS keyword_funcion SENTENCIAS terminador_lambda",
+    "lambda con parametros A y B que imprima A. Terminar lambda", "(A, B) => {\n\tconsole.log(A);\n});")
+    ),
+    ( "EXPRESION_INVOCACION", new Composicion("comando_invocacion id", "invoque f", "f()")),
+    ( "EXPRESION_INVOCACION", new Composicion("comando_invocacion id keyword_parametros tipo EXPRESIONES terminador_parametros", "invoque f con parametros 1.0 y 2.0 terminar parametros", "f(1.0, 2.0)")),
+    ( "EXPRESION_INVOCACION_OBJETO", new Composicion("comando_invocacion id keyword_miembro_objeto id", "invoque f de A", "A.f()")),
+    ( "EXPRESION_INVOCACION_OBJETO", new Composicion("comando_invocacion id keyword_miembro_objeto id keyword_parametros tipo EXPRESIONES terminador_parametros", "invoque f de A con parametros 1.0 y 2.0 terminar parametros", "A.f(1.0, 2.0)")),
+    ( "EXPRESION_MIEMBRO_VARIABLE", new Composicion("id keyword_miembro_objeto id", "b de A.", "A.b")),
+    ( "LITERAL_NUM", new Composicion("literal_num", "1.0", "1.0")),
+    ( "LITERAL_BOOL", new Composicion("literal_bool", "verdadero", "true")),
+    ( "LITERAL_HILERA", new Composicion("keyword_hilera STR separador ... terminador_hilera", "hilera verdadero terminar hilera", "\"verdadero\"")),
+    ( "LITERAL_ARREGLO", new Composicion("keyword_arreglo EXPRESION separador ... terminador_arreglo", "arreglo 1.0, 2.0 terminar arreglo", "[1.0, 2.0]")),
+    ( "LITERAL_OBJETO", new Composicion("keyword_objeto", "objeto", "{}")),
+    ( "VAR", new Composicion("id", "A", "A")),
     };
 
 
